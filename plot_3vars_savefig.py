@@ -19,8 +19,6 @@ Assumptions: developed and tested using Python version 3.8.8 on macOS 11.6
 import pandas as pd
 import matplotlib.pyplot as plt
 
-plot_fname = "myplot.png"
-
 fname = "data_3vars.csv"
 df = pd.read_csv(fname, comment="#")
 print(df)
@@ -37,32 +35,53 @@ code1_time = df[var_names[1]].values.tolist()
 code2_time = df[var_names[2]].values.tolist()
 code3_time = df[var_names[3]].values.tolist()
 
+# MFLOPS
 plt.figure()
-
-plt.title("Comparison of 3 Codes")
-
+plt.title("MFLOPS Comparison")
 xlocs = [i for i in range(len(problem_sizes))]
-
 plt.xticks(xlocs, problem_sizes)
-
-plt.plot(code1_time, "r-o")
-plt.plot(code2_time, "b-x")
-plt.plot(code3_time, "g-^")
-
-#plt.xscale("log")
-#plt.yscale("log")
-
+plt.plot([1000000 / x for x in code1_time], "r-o")
+plt.plot([1000000 / x for x in code2_time], "b-x")
+plt.plot([1000000 / x for x in code3_time], "g-^")
 plt.xlabel("Problem Sizes")
-plt.ylabel("runtime")
-
+plt.ylabel("MFLOPS")
 varNames = [var_names[1], var_names[2], var_names[3]]
 plt.legend(varNames, loc="best")
-
 plt.grid(axis='both')
+plt.savefig("mflops_plot.png", dpi=300)
+plt.close()
 
-# save the figure before trying to show the plot
-plt.savefig(plot_fname, dpi=300)
+# Memory Bandwidth
+plt.figure()
+plt.title("Memory Bandwidth Comparison")
+xlocs = [i for i in range(len(problem_sizes))]
+plt.xticks(xlocs, problem_sizes)
+plt.plot([(4000000 / x) / (204.8 * 1073741824) for x in code1_time], "r-o")
+plt.plot([(4000000 / x) / (204.8 * 1073741824) for x in code2_time], "b-x")
+plt.plot([(4000000 / x) / (204.8 * 1073741824) for x in code3_time], "g-^")
+plt.xlabel("Problem Sizes")
+plt.ylabel("Memeory Bandwidth")
+varNames = [var_names[1], var_names[2], var_names[3]]
+plt.legend(varNames, loc="best")
+plt.grid(axis='both')
+plt.savefig("bandwidth_plot.png", dpi=300)
+plt.close()
 
+# Memory Latency
+plt.figure()
+plt.title("Memory Latency Comparison")
+xlocs = [i for i in range(len(problem_sizes))]
+plt.xticks(xlocs, problem_sizes)
+plt.plot([x / 4000000 for x in code1_time], "r-o")
+plt.plot([x / 4000000 for x in code2_time], "b-x")
+plt.plot([x / 4000000 for x in code3_time], "g-^")
+plt.xlabel("Problem Sizes")
+plt.ylabel("Memeory Latency")
+varNames = [var_names[1], var_names[2], var_names[3]]
+plt.legend(varNames, loc="best")
+plt.grid(axis='both')
+plt.savefig("latency_plot.png", dpi=300)
+plt.close()
 
 plt.show()
 
